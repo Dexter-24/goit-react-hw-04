@@ -27,13 +27,14 @@ export default function App() {
         setError(false)
         const data = await fetchImages(query, page);
         console.log(data.results);
+        console.log(`Current page: ${page}`);
+        console.log(`Total pages: ${data.total_pages}`);
         setImages(prevImages => [...prevImages, ...data.results]);
-        setTotalPages(data.totalPages);
+        setTotalPages(data.total_pages);
       } catch (error) {
         setError(error.message);
       } finally {
         setIsLoading(false);
-        setError(null);
       }
     };
 
@@ -64,7 +65,7 @@ export default function App() {
       {error && <ErrorMessage message={error} />}
       {images.length > 0 && <ImageGallery images={images} onImageClick={handleImageClick} />}
       {isLoading && <Loader />}
-      {images.length > 0 && !isLoading && <LoadMoreBtn onLoadMore={() => setPage(prevPage => prevPage + 1)} />}
+      {images.length > 0 && !isLoading && page < totalPages && <LoadMoreBtn onLoadMore={() => setPage(prevPage => prevPage + 1)} />}
       {page >= totalPages && <p> End of Collection</p>}
       <ImageModal isOpen={isModalOpen} onClose={closeModal} image={selectedImg} />
     </div>
